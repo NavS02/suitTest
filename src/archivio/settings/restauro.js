@@ -16,7 +16,6 @@ export default {
     fields() {
         return [
             // new FormField({ name: 'id', label: 'id', type: 'text' }),
-           
             new FormField({ name: 'rstd', label: 'Data', type: 'text', value: '' }),
             new FormField({ name: 'rste', label: 'Ente responsabile', type: 'text', value: '' }),
             

@@ -1,5 +1,5 @@
 <template>
-<!-- DASHBOARD -->
+  <!-- DASHBOARD -->
   <main id="main">
     <div class="row d-flex">
       <div class="col-4">
@@ -67,132 +67,47 @@
         </div>
       </div>
     </div>
-    <!-- NAVIGATION MAPS -->
-    <div style="position: relative">
-      <img
-        :src="image"
-        alt=""
-        usemap="#map1689762472709"
-        class="img-fluid mainMap"
-        draggable="false"
-      />
-      <img
-        src="/mappa_1piano.png"
-        alt=""
-        srcset=""
-        v-if="showPiano1"
-        class="img-fluid piano1"
-      />
-      <img
-        src="/mappa_pianoterra.png"
-        alt=""
-        srcset=""
-        v-if="showPianoT"
-        class="img-fluid pianoT"
-      />
-      <img
-        src="/mappa_interrato.png"
-        alt=""
-        srcset=""
-        v-if="showPianoI"
-        class="img-fluid pianoI"
-      />
-    </div>
-    <!-- INTERACTIVE COORDS -->
-    <map id="map1689762472709" name="map1689762472709" style="cursor: pointer"
-      ><area
-        shape="rect"
-        coords="0.000004752929697815489,1.0000047529296694,417.6666707529297,219.6666707529297"
-        target="_self"
-        @click="changeImage(1)"
-        @mouseover="showPiano1 = true"
-        @mouseleave="showPiano1 = false" /><area
-        shape="rect"
-        coords="2.000004752929698,221.00002001171873,411.6666707529297,425.66668601171875"
-        target="_self"
-        @click="changeImage(0)"
-        @mouseover="showPianoT = true"
-        @mouseleave="showPianoT = false" /><area
-        shape="rect"
-        coords="2.000004752929698,433.00002001171873,243.66667075292972,609.6666860117188"
-        target="_self"
-        @click="changeImage(-1)"
-        @mouseover="showPianoI = true"
-        @mouseleave="showPianoI = false"
-    /></map>
+  
+   
   </main>
 </template>
 
-<script>
+<script setup>
 import { ref } from "vue";
 import { directus } from "../API/";
 import { useRoute, useRouter } from "vue-router";
 
-export default {
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    let totalOpere = ref();
-    let totalAutori = ref();
-    let totalIscrizioni = ref();
-    let showPiano1 = ref(false);
-    let showPianoT = ref(false);
-    let showPianoI = ref(false);
+const route = useRoute();
+const router = useRouter();
+let totalOpere = ref();
+let totalAutori = ref();
+let totalIscrizioni = ref();
+let showPiano1 = ref(false);
+let showPianoT = ref(false);
+let showPianoI = ref(false);
+const imageHome = ref(import.meta.env.VITE_PROJECT_MAIN_LOGO);
 
-    const image = ref("/mappa_generale-1024x756.png");
-    fetchDashboard();
-    async function fetchDashboard() {
-      const responseOp = await directus.items("opera").readByQuery({
-        fields: ["COUNT(*)"],
-        limit: -1,
-      });
-      totalOpere.value = responseOp.data.length;
+fetchDashboard();
+async function fetchDashboard() {
+  const responseOp = await directus.items("opera").readByQuery({
+    fields: ["COUNT(*)"],
+    limit: -1,
+  });
+  totalOpere.value = responseOp.data.length;
 
-      const responseAut = await directus.items("autore").readByQuery({
-        fields: ["COUNT(*)"],
-        limit: -1,
-      });
-      totalAutori.value = responseAut.data.length;
+  const responseAut = await directus.items("autore").readByQuery({
+    fields: ["COUNT(*)"],
+    limit: -1,
+  });
+  totalAutori.value = responseAut.data.length;
 
-      const responseIscriz = await directus.items("iscrizione").readByQuery({
-        fields: ["COUNT(*)"],
-        limit: -1,
-      });
-      totalIscrizioni.value = responseIscriz.data.length;
-    }
-    function changeImage(piano) {
-      if (piano == 1) {
-        // primo piano
+  const responseIscriz = await directus.items("iscrizione").readByQuery({
+    fields: ["COUNT(*)"],
+    limit: -1,
+  });
+  totalIscrizioni.value = responseIscriz.data.length;
+}
 
-        router.push({
-          name: "searchArc",
-          params: { piano: "primo piano" },
-        });
-      } else if (piano == 0) {
-        // piano terra
-        router.push({
-          name: "searchArc",
-          params: { piano: "piano terra" },
-        });
-      } else if (piano == -1) {
-        router.push({
-          name: "searchArc",
-          params: { piano: "ipogeo" },
-        });
-      }
-    }
-    return {
-      image,
-      showPiano1,
-      showPianoT,
-      showPianoI,
-      totalOpere,
-      totalAutori,
-      totalIscrizioni,
-      changeImage,
-    };
-  },
-};
 </script>
 
 <style scoped>

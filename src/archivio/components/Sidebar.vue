@@ -1,23 +1,24 @@
-<script>
+<script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import store from "../../store";
 
-export default {
-  setup(props, context) {
-    const accessToken = store?.tokenInfo?.access_token;
-    const authenticated = computed(() => store.authenticated);
+var root = document.documentElement;
 
-    return {
-      authenticated,
-    };
-  },
-};
+const accessToken = store?.tokenInfo?.access_token;
+const authenticated = computed(() => store.authenticated);
+const colorAccordeon = ref("#" + import.meta.env.VITE_PROJECT_MAIN_COLOR);
+const textColorAccordeon = ref(
+  "#" + import.meta.env.VITE_PROJECT_TEXT_MAIN_COLOR
+);
+root.style.setProperty("--bs-primary-bg-subtle", colorAccordeon.value);
+root.style.setProperty("--bs-primary-text-emphasis", textColorAccordeon.value);
+root.style.setProperty("--bs-primary-border-subtle", colorAccordeon.value);
 </script>
 
 <template>
   <!-- ======= Sidebar ======= -->
-  <aside  id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar">
     <div class="accordion" id="accordionPanelsStayOpenExample">
       <div class="accordion-item">
         <h2 class="accordion-header" id="panelsStayOpen-headingOne">
@@ -47,15 +48,21 @@ export default {
                 >
               </li>
               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'searchArc', params: { piano: 'all' } }">
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'searchArc', params: { piano: 'all' } }"
+                >
                   <i class="bi bi-search text-warning"></i> Cerca</router-link
                 >
               </li>
               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'CreateArc', params: { collection: 'opera' } }">
-                <i class="bi bi-file-earmark-plus text-info"></i> Nuova scheda</router-link
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'CreateArc', params: { collection: 'opera' } }"
                 >
-                
+                  <i class="bi bi-file-earmark-plus text-info"></i> Nuova
+                  scheda</router-link
+                >
               </li>
             </ul>
           </div>
@@ -82,10 +89,13 @@ export default {
         >
           <div class="accordion-body">
             <ul class="list-group" id="sidebar-nav">
-                <li class="list-group-item">
+              <li class="list-group-item">
                 <router-link
                   class="nav-link"
-                  :to="{ name: 'listArc', params: { collection: 'collocazione' } }"
+                  :to="{
+                    name: 'listArc',
+                    params: { collection: 'collocazione' },
+                  }"
                   >Collocazione</router-link
                 >
               </li>
@@ -224,32 +234,40 @@ export default {
           <div class="accordion-body">
             <ul class="list-group">
               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'modelFav'  }">
+                <router-link class="nav-link" :to="{ name: 'modelFav' }">
                   <i class="bi bi-printer"></i> Stampa i preferiti</router-link
                 >
               </li>
-               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'modelSan',params: { id: 0 } }">
+              <li class="list-group-item">
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'modelSan', params: { id: 0 } }"
+                >
                   <i class="bi bi-printer"></i> Stampa sanitaria</router-link
                 >
               </li>
-               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'modelPres',params: { id: 0 } }">
+              <li class="list-group-item">
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'modelPres', params: { id: 0 } }"
+                >
                   <i class="bi bi-printer"></i> Stampa prestito</router-link
                 >
               </li>
-               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'printItem',params: { id: 0 } }">
+              <li class="list-group-item">
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'printItem', params: { id: 0 } }"
+                >
                   <i class="bi bi-printer"></i> Stampa opera</router-link
                 >
               </li>
-             <!-- prestito -->
-             
+              <!-- prestito -->
             </ul>
           </div>
         </div>
       </div>
-         <div class="accordion-item">
+      <div class="accordion-item">
         <h2 class="accordion-header" id="headingTwo">
           <button
             class="accordion-button collapsed"
@@ -271,7 +289,10 @@ export default {
           <div class="accordion-body">
             <ul class="list-group">
               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'listArc', params: { collection: 'app' } }">
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'listArc', params: { collection: 'app' } }"
+                >
                   <i class="bi bi-search text-warning"></i> Lista</router-link
                 >
               </li>
@@ -281,14 +302,12 @@ export default {
                 >
                 
               </li> -->
-
             </ul>
           </div>
         </div>
       </div>
 
-
-       <div class="accordion-item">
+      <div class="accordion-item">
         <h2 class="accordion-header" id="headingTwo">
           <button
             class="accordion-button collapsed"
@@ -312,27 +331,33 @@ export default {
               <li class="list-group-item">
                 <router-link
                   class="nav-link"
-                  :to="{ name: 'listArc', params: { collection: 'touch_chiesa' } }"
+                  :to="{
+                    name: 'listArc',
+                    params: { collection: 'touch_chiesa' },
+                  }"
                   >Chiese</router-link
                 >
               </li>
               <li class="list-group-item">
-                <router-link class="nav-link" :to="{ name: 'listArc', params: { collection: 'touch' } }">
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'listArc', params: { collection: 'touch' } }"
+                >
                   <i class="bi bi-search text-warning"></i> Lista</router-link
                 >
               </li>
-          <li class="list-group-item">
-                 <router-link class="nav-link" :to="{ name: 'ItemsMap' }">
+              <li class="list-group-item">
+                <router-link class="nav-link" :to="{ name: 'ItemsMap' }">
                   <i class="bi bi-map"></i>
-                  Mappa</router-link>
+                  Mappa</router-link
+                >
               </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
-
   </aside>
   <!-- End Sidebar-->
 </template>
-<style></style>
+<style scoped></style>

@@ -22,7 +22,7 @@
       <!-- CARD WITH ALL THE DATA -->
       <div class="card mt-5" v-if="id != 0">
         <div class="card-header text-center">
-          <img src="/logoMilano.png" alt="" srcset="" style="width: 300px" />
+          <img :src="imageHome" alt="" srcset="" style="width: 300px" />
           <br />
           <br />
           <h2 v-if="id != 0">Scheda n.{{ id }}</h2>
@@ -68,6 +68,8 @@ const item = ref();
 const collection = ref("opera");
 const fields = ref([]); // fields settings
 const url = ref("/not-found.svg");
+const imageHome = ref(import.meta.env.VITE_PROJECT_MAIN_LOGO);
+
 watch(
   route,
   async () => {

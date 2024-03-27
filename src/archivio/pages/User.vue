@@ -101,6 +101,23 @@
                     Schede preferite
                   </button>
                 </li>
+                <li
+                  class="nav-item"
+                  role="presentation"
+                  v-if="me.role === 'Administrator'"
+                >
+                  <button
+                    class="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#profile-admin"
+                    aria-selected="false"
+                    role="tab"
+                    tabindex="-1"
+                    @click="fetchDataUsers()"
+                  >
+                    Admin Panel
+                  </button>
+                </li>
               </ul>
               <div class="tab-content pt-2">
                 <div
@@ -276,7 +293,152 @@
                   </form>
                   <!-- End Profile Edit Form -->
                 </div>
-
+                <div
+                  class="tab-pane fade profile-admin pt-3"
+                  id="profile-admin"
+                  role="tabpanel"
+                >
+                  <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="headingUsers">
+                        <button
+                          class="accordion-button"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseUsers"
+                          aria-expanded="true"
+                          aria-controls="collapseUsers"
+                        >
+                          Utenti
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseUsers"
+                        class="accordion-collapse collapse show"
+                        aria-labelledby="headingUsers"
+                        data-bs-parent="#accordionExample"
+                      >
+                        <div class="accordion-body">
+                          <div style="text-align: right">
+                            <button
+                              class="btn btn-sm btn-primary"
+                              @click="createNewUser()"
+                            >
+                              <font-awesome-icon
+                                icon="fa-solid fa-plus"
+                                fixed-width
+                              />
+                              <span class="ms-1">Creare un nuovo utente</span>
+                            </button>
+                          </div>
+                          <br />
+                          <div class="table-responsive">
+                            <Table
+                              class="table v-middle m-0"
+                              :items="itemsUsers"
+                              :fields="fieldsUsers"
+                              id="table"
+                            >
+                              <template #cell(actions)="{ item, field, value }">
+                                <div class="actions">
+                                  <button
+                                    title="edit"
+                                    class="btn btn-sm btn-light"
+                                    @click="onEditClicked2(item)"
+                                  >
+                                    <font-awesome-icon
+                                      icon="fa-solid fa-pencil"
+                                      fixed-width
+                                    />
+                                  </button>
+                                  <button
+                                    title="delete"
+                                    class="btn btn-sm btn-light text-danger"
+                                    @click="onDeleteClicked2(item)"
+                                  >
+                                    <font-awesome-icon
+                                      icon="fa-solid fa-trash"
+                                      fixed-width
+                                    />
+                                  </button>
+                                </div>
+                              </template>
+                            </Table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="headingUsers2">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseUsers2"
+                          aria-expanded="false"
+                          aria-controls="collapseUsers2"
+                        >
+                          Ruoli
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseUsers2"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="headingUsers2"
+                        data-bs-parent="#accordionExample"
+                      >
+                        <div class="accordion-body">
+                          <div style="text-align: right">
+                            <button
+                              class="btn btn-sm btn-primary"
+                              @click="createNewRole()"
+                            >
+                              <font-awesome-icon
+                                icon="fa-solid fa-plus"
+                                fixed-width
+                              />
+                              <span class="ms-1">Creare un nuovo ruolo</span>
+                            </button>
+                          </div>
+                          <br />
+                          <div class="table-responsive">
+                            <Table
+                              class="table v-middle m-0"
+                              :items="itemsRoles"
+                              :fields="fieldsRoles"
+                              id="table"
+                            >
+                              <template #cell(actions)="{ item, field, value }">
+                                <div class="actions" v-if="item.name!='Administrator'">
+                                  <button
+                                    title="edit"
+                                    class="btn btn-sm btn-light"
+                                    @click="onEditClicked3(item)"
+                                  >
+                                    <font-awesome-icon
+                                      icon="fa-solid fa-pencil"
+                                      fixed-width
+                                    />
+                                  </button>
+                                  <button
+                                    title="delete"
+                                    class="btn btn-sm btn-light text-danger"
+                                    @click="onDeleteClicked(item)"
+                                  >
+                                    <font-awesome-icon
+                                      icon="fa-solid fa-trash"
+                                      fixed-width
+                                    />
+                                  </button>
+                                </div>
+                              </template>
+                            </Table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div
                   class="tab-pane fade pt-3"
                   id="profile-settings"
@@ -539,7 +701,7 @@
   </main>
 </template>
 <script>
-import { ref, computed, watch,inject } from "vue";
+import { ref, computed, watch, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import store from "../../store";
@@ -560,8 +722,15 @@ export default {
     const userRol = ref();
     let imageurl = ref("/not-found.svg");
     let collection = ref();
+    let collection2 = ref();
+    let collection3 = ref();
     let fields = ref();
     let items = ref();
+    let fieldsUsers = ref();
+    let fieldsRoles = ref();
+
+    let itemsUsers = ref();
+    let itemsRoles = ref();
     const me = ref();
     const showAlert = ref(false);
     let currentItem = ref();
@@ -592,6 +761,7 @@ export default {
         },
       });
       me.value.role = myRol.data[0].name;
+
       const response = await directus.items(collection.value).readByQuery({
         filter: {
           user_created: {
@@ -604,6 +774,41 @@ export default {
       items.value = data;
       imageurl.value =
         import.meta.env.VITE_API_BASE_URL + "/assets/" + me.value.avatar;
+    }
+    async function fetchDataUsers() {
+      if (me.value.role == "Administrator") {
+        collection2.value = "directus_users";
+        collection3.value = "directus_roles";
+        if (!collection2.value) return;
+        // // retrieve the settings
+        let itemSettings = settings[collection2.value];
+        // // define the subset of fields you need to view in the table
+        let collectionFields = itemSettings.tableFields();
+        fieldsUsers.value = collectionFields;
+        const userList = await directus.items("directus_users").readByQuery({});
+        itemsUsers.value = userList.data;
+        console.log(userList.data);
+        const roleArray = await directus
+          .items("directus_roles")
+          .readByQuery({});
+        itemsUsers.value.forEach((user) => {
+          roleArray.data.forEach((roleSingle) => {
+            if (user.role == roleSingle.id) {
+              user.role = roleSingle.name;
+            }
+          });
+        });
+        if (!collection3.value) return;
+        let itemSettings2 = settings[collection3.value];
+        // // define the subset of fields you need to view in the table
+        let collectionFields2 = itemSettings2.tableFields();
+        fieldsRoles.value = collectionFields2;
+        itemsRoles.value = roleArray.data;
+        console.log(itemsRoles.value);
+        itemsRoles.value.forEach((role) => {
+          role.users = role.users.length;
+        });
+      }
     }
     async function updateImage() {
       const fileInput = document.getElementById("fileInput");
@@ -637,6 +842,18 @@ export default {
       router.push({
         name: "editItemArc",
         params: { id: item.id_opera, collection: "opera" },
+      });
+    }
+    function onEditClicked2(item) {
+      router.push({
+        name: "editItemArc",
+        params: { id: item.id, collection: "directus_users" },
+      });
+    }
+    function onEditClicked3(item) {
+      router.push({
+        name: "editItemArc",
+        params: { id: item.id, collection: "directus_roles" },
       });
     }
     async function onChangeUserData() {
@@ -680,6 +897,54 @@ export default {
         params: { id: parseInt(currentItem.value) },
       });
     }
+    function createNewUser() {
+      router.push({
+        name: "createArc",
+        params: { collection: "directus_users" },
+      });
+    }
+    function createNewRole(){
+       router.push({
+        name: "createArc",
+        params: { collection: "directus_roles" },
+      });
+    }
+
+    async function onDeleteClicked(item) {
+      console.log(item);
+      const confirmed = await modal.confirm({
+        title: "Confirm",
+        body: "Are you sure you want to delete this item?",
+      });
+      if (confirmed) deleteItem(item);
+    }
+    
+    async function onDeleteClicked2(item) {
+      console.log(item);
+      const confirmed = await modal.confirm({
+        title: "Confirm",
+        body: "Are you sure you want to delete this item?",
+      });
+      if (confirmed) deleteItem2(item);
+    }
+    async function deleteItem2(item) {
+      const { id } = item;
+      console.log(id);
+      await store.collections.deleteOne("directus_users", id);
+
+      fetchData();
+      fetchDataUsers();
+
+    }
+    async function deleteItem(item) {
+      const { id } = item;
+      console.log(id);
+      await store.collections.deleteOne("directus_roles", id);
+
+      fetchData();
+      fetchDataUsers();
+
+    }
 
     return {
       authenticated,
@@ -691,6 +956,10 @@ export default {
       imageurl,
       showAlert,
       currentItem,
+      fieldsUsers,
+      itemsUsers,
+      itemsRoles,
+      fieldsRoles,
       confirmLogout,
       fetchData,
       onSaveClicked,
@@ -702,6 +971,13 @@ export default {
       printS,
       printP,
       printScheda,
+      onEditClicked2,
+      onEditClicked3,
+      createNewUser,
+      createNewRole,
+      onDeleteClicked,
+      onDeleteClicked2,
+      fetchDataUsers,
       toggleClass,
       isToggled: false,
     };

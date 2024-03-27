@@ -1,11 +1,11 @@
 <template>
   <div class="container">
     <div class="card">
-      <img src="/logoMilano.png" alt="Logo" class="logo" />
+      <img :src="imageHome" alt="Logo" class="logo" />
 
       <div class="options">
         <div class="card" @click="onOptionClicked('archivio')">
-          <div class="card-icon">
+          <div class="card-icon" :style="'color:'+colorHome">
             <font-awesome-icon :icon="['fa-solid', 'fa-paintbrush']" />
           </div>
           <div class="card-body">
@@ -23,29 +23,23 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
-export default {
-  setup(props, context) {
-    const router = useRouter();
-    const route = useRoute();
+const router = useRouter();
+const route = useRoute();
+const imageHome = ref(import.meta.env.VITE_PROJECT_MAIN_LOGO);
+const colorHome = ref('#'+import.meta.env.VITE_PROJECT_MAIN_COLOR);
 
-    function onOptionClicked(option) {
-      router.push({ name: "login", params: { program: option } });
-    }
-
-    return {
-      onOptionClicked,
-    };
-  },
-};
+function onOptionClicked(option) {
+  router.push({ name: "login", params: { program: option } });
+}
 </script>
 
 <style scoped>
 .container {
-   max-width: 1024px;
+  max-width: 1024px;
   margin: auto;
   padding: 20px;
   display: flex;
@@ -93,7 +87,6 @@ export default {
 
 .card-icon {
   font-size: 48px;
-  color: #861B2A;
   margin-bottom: 10px;
 }
 

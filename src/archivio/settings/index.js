@@ -71,3 +71,6 @@ export { default as app } from './app/app'
 export { default as touch } from './touch/touch'
 export { default as touch_chiesa } from './touch/touch_chiesa'
 
+export { default as directus_users } from './directus_users'
+export { default as directus_roles } from './directus_roles'
+

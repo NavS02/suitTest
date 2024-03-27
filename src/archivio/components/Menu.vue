@@ -1,44 +1,36 @@
-<script>
+<script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import store from "../../store";
 import { directus } from "../API/";
 
-export default {
-  setup(props, context) {
-    const accessToken = store?.tokenInfo?.access_token;
-    const authenticated = computed(() => store.authenticated);
-    const user = ref();
+const accessToken = store?.tokenInfo?.access_token;
+const authenticated = computed(() => store.authenticated);
+const user = ref();
+const imageHome = ref(import.meta.env.VITE_PROJECT_MAIN_LOGO);
+const colorHome = ref('#'+import.meta.env.VITE_PROJECT_TEXT_MAIN_COLOR);
 
-    const router = useRouter();
+const router = useRouter();
 
-    function toggleClass() {
-      this.isToggled = !this.isToggled;
-      document.body.classList.toggle("toggle-sidebar", this.isToggled);
-    }
-    getUserInfo();
-    async function getUserInfo() {
-      const me = await directus.users.me.read();
-      user.value = me;
-    }
-    function confirmLogout() {
-      const confirmed = confirm("È sicuro di voler effettuare il logout?");
-      if (confirmed) router.push({ name: "logout" });
-    }
-    function onProfileClicked() {
-      router.push({ name: "userArc" });
-    }
-
-    return {
-      authenticated,
-      user,
-      confirmLogout,
-      onProfileClicked,
-      toggleClass,
-      isToggled: false,
-    };
-  },
-};
+function toggleClass() {
+  if (document.body.classList.contains("toggle-sidebar")) {
+    document.body.classList.remove("toggle-sidebar");
+  } else {
+    document.body.classList.add("toggle-sidebar");
+  }
+}
+getUserInfo();
+async function getUserInfo() {
+  const me = await directus.users.me.read();
+  user.value = me;
+}
+function confirmLogout() {
+  const confirmed = confirm("È sicuro di voler effettuare il logout?");
+  if (confirmed) router.push({ name: "logout" });
+}
+function onProfileClicked() {
+  router.push({ name: "userArc" });
+}
 </script>
 
 <template>
@@ -46,16 +38,16 @@ export default {
     id="header"
     class="header fixed-top d-flex align-items-center justify-content-between"
   >
-  <!-- ICON OF THE MUSEUM -->
+    <!-- ICON OF THE MUSEUM -->
     <div class="d-flex align-items-center">
-      <img src="/logoMilano.png" alt="" style="height: 50px" />
+      <img :src="imageHome" alt="" style="height: 50px" />
       <i class="bi bi-list toggle-sidebar-btn" @click="toggleClass"></i>
     </div>
-<!-- TITLE -->
+    <!-- TITLE -->
     <div class="operaTitle text-center">
       <span>Archivio Opere d'arte </span>
     </div>
-<!-- USER DROPDOWN -->
+    <!-- USER DROPDOWN -->
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
         <ul class="nav">
@@ -64,6 +56,7 @@ export default {
               class="nav-link nav-profile d-flex align-items-center pe-0"
               href="#"
               data-bs-toggle="dropdown"
+              :style="'color:'+colorHome"
             >
               {{ user?.first_name }}
               {{ user?.last_name }}

@@ -14,7 +14,7 @@
 
                 <i class="bi bi-house text-primary"></i>
                 <router-link class="nav-link" :to="{ name: 'home' }">
-                  Museo diocesano</router-link
+                  {{projectName}}</router-link
                 >
               </a>
             </div>
@@ -87,7 +87,7 @@
               <a
                 href="https://www.ambientinarratividigitali.it/"
                 target="_blank"
-                >And Srl</a
+                >AND Srl</a
               >
             </div>
           </div>
@@ -112,6 +112,8 @@ export default {
     const email = ref("");
     const password = ref("");
     const showError =ref(false)
+const projectName = ref(import.meta.env.VITE_PROJECT_NAME);
+
     watch(
       route,
       () => {
@@ -146,6 +148,7 @@ export default {
       email,
       showError,
       password,
+      projectName,
       login,
     };
   },

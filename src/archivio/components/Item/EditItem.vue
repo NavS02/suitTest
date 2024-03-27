@@ -13,7 +13,7 @@
       >
         Scheda n. {{ id }} salvata!
       </div>
-      <h2 class="text-center">Scheda n. {{ id }}</h2>
+      <h2 class="text-center" v-if="collection !== 'directus_users'">Scheda n. {{ id }}</h2>
       <img :src="url" alt="" class="center" style="width: 15%" id="my-image" />
       <br />
       <hr />
